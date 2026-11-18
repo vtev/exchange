@@ -1,6 +1,8 @@
 package com.demo.exchangeservice.common;
 
 import com.demo.exchangeservice.exchange.service.ExchangeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,22 +23,25 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ProblemDetail handleUnexpected(Exception exception) {
+        log.error("Unexpected error", exception);
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error",
                 "An unexpected error occurred");
-    }
-
-    @ExceptionHandler
+    }    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleExchange(ExchangeException exception) {
+        log.warn(exception.getMessage());
         return problem(HttpStatus.BAD_REQUEST, "Bad Request", exception.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleIllegalArgument(IllegalArgumentException exception) {
+        log.warn(exception.getMessage());
         return problem(HttpStatus.BAD_REQUEST, "Bad Request", exception.getMessage());
     }
 
@@ -51,6 +56,7 @@ public class GlobalExceptionHandler {
                                 : "is invalid",
                         (first, _) -> first,
                         TreeMap::new));
+        log.warn("Request validation failed: {}", errors);
         ProblemDetail problemDetail = problem(HttpStatus.BAD_REQUEST, "Bad Request",
                 "Request validation failed: " + String.join(", ", errors.keySet()));
         problemDetail.setProperty("fields", errors);
@@ -71,6 +77,7 @@ public class GlobalExceptionHandler {
                                         .map(Object::toString)
                                         .toList()))
                         : detailOrDefault(cause);
+        log.warn(detail);
         return problem(HttpStatus.BAD_REQUEST, "Bad Request", detail);
     }
 
@@ -81,6 +88,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        log.warn("Invalid value for parameter: {}", exception.getName());
         return problem(HttpStatus.BAD_REQUEST, "Bad Request",
                 "Invalid value for parameter: " + exception.getName());
     }

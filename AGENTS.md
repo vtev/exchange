@@ -63,7 +63,12 @@ Integration tests require a running Docker daemon (Testcontainers).
   field with its message in a `fields` map. `ExchangeConverter` assumes valid input and
   only reports missing rates (via `ExchangeException`).
 - **All error responses are RFC 9457 ProblemDetail** produced by
-  `common.GlobalExceptionHandler`. Don't build error bodies in controllers.
+  `common.GlobalExceptionHandler`. Don't build error bodies in controllers. The
+  advice logs every handled exception: `warn` with the reason for 4xx responses,
+  `error` with the exception (full stack trace) for the 500 fallback. Tracing is
+  prod-only (`management.tracing.enabled: true` in prod, disabled in dev/test);
+  when enabled, Boot's Micrometer tracing puts `traceId`/`spanId` in the MDC and the
+  structured JSON logs include them automatically — never log correlation IDs manually.
 - **OpenAPI annotations go on the `ConversionApi` interface**, not the controller.
 - DTOs are records; use constructor injection everywhere; no field injection.
 - JPA entities use a `private` no-arg constructor (Hibernate instantiates them

@@ -8,3 +8,10 @@ logging:
   structured:
     format:
       console: logstash
+
+# Observation/tracing on: Micrometer tracing populates traceId/spanId in the MDC
+# and Boot's structured JSON logs include them automatically as fields.
+management:
+  tracing:
+    enabled: true
+

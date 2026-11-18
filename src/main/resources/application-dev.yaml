@@ -11,8 +11,12 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{40} : %msg%n"
 
+# Observation/tracing (and OTLP export) is enabled in prod only; in dev and tests
+# no metrics registry, tracing or telemetry export is created.
 management:
   defaults:
     metrics:
       export:
         enabled: false
+  tracing:
+    enabled: false

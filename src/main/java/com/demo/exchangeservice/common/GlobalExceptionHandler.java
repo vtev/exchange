@@ -16,7 +16,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice
@@ -91,16 +90,6 @@ public class GlobalExceptionHandler {
             : detailOrDefault(cause);
     log.warn(detail);
     return problem(HttpStatus.BAD_REQUEST, "Bad Request", detail);
-  }
-
-  @ExceptionHandler
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
-    log.warn("Invalid value for parameter: {}", exception.getName());
-    return problem(
-        HttpStatus.BAD_REQUEST,
-        "Bad Request",
-        "Invalid value for parameter: " + exception.getName());
   }
 
   private static String detailOrDefault(Throwable cause) {

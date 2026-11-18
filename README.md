@@ -123,6 +123,13 @@ Three levels:
 Integration tests and the dev run (`bootTestRun`) require a running Docker daemon;
 Testcontainers manages all containers.
 
+## Code style
+
+Formatting is enforced by [Spotless](https://github.com/diffplug/spotless) with
+**google-java-format (Google style)**. Run `./gradlew spotlessApply` to format all Java
+sources; `spotlessCheck` is wired into `check`, so a build fails if any file is not
+formatted.
+
 ## AI usage notes
 
 As permitted by the assignment: this solution was built with the help of an AI coding agent
@@ -138,5 +145,5 @@ As permitted by the assignment: this solution was built with the help of an AI c
 - **What was changed/improved by hand:** architectural decisions were reviewed and steered
   iteratively with the reviewer — domain-driven package split instead of layer packages,
   single `V1__init.sql` migration, DB-default `created_at` instead of JPA auditing, no rate
-  rounding, currency enum handling, validation placement, and Testcontainers-based dev run
-  (`bootTestRun`) instead of a compose file.
+  rounding, currency enum handling, validation placement, Testcontainers-based dev run
+  (`bootTestRun`) instead of a compose file, and Spotless/google-java-format enforcement.

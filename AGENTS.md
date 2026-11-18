@@ -37,6 +37,7 @@ business logic holds no Spring web types.
 ./gradlew test --tests "com.demo.exchangeservice.exchange.service.ExchangeConverterTest"
 ./gradlew bootTestRun          # dev run: Testcontainers Postgres started alongside the app
 ./gradlew bootJar              # build the fat jar (build/libs/)
+./gradlew spotlessApply        # format all Java sources (google-java-format, Google style)
 docker build -t exchangeservice . && docker run -p 8080:8080 -e DB_URL=... exchangeservice
 ```
 
@@ -79,6 +80,9 @@ Integration tests require a running Docker daemon (Testcontainers).
   JPA/Bean Validation/OpenAPI annotations carry their own semantics. The only permitted
   comments are the `// given`, `// when`, `// then` markers in tests — exactly these
   three words, nothing after them.
+- **Formatting is enforced by Spotless with google-java-format (Google style).**
+  Run `./gradlew spotlessApply` before committing; `spotlessCheck` is wired into
+  `check`, so the build fails on unformatted code.
 
 ## Configuration
 

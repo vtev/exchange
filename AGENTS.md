@@ -6,7 +6,7 @@ Guidance for AI coding agents (and human contributors) working on this repositor
 
 `exchangeservice` exposes one REST endpoint that converts a monetary amount between two
 currencies, using a fixed snapshot of EUR-based exchange rates seeded into PostgreSQL by
-Flyway. Built for the Awin "Billing & Payments" take-home assignment.
+Flyway.
 
 ## Stack
 
@@ -58,6 +58,10 @@ Integration tests require a running Docker daemon (Testcontainers).
 - **Currencies are the `Currency` enum** (`exchange.service.Currency`), mapped with
   `@Enumerated(EnumType.STRING)` into the `VARCHAR(3)` `currency_code` column.
   Adding a currency = add enum constant + seed row in a new migration, in the same change.
+- **Cross-currency conversions go through the EUR base** (`amount / rate(source) *
+  rate(target)`) at full precision; only the final converted amount is rounded to
+  2 decimal places (`HALF_UP`). Rates use the ECB "price of 1 EUR" convention
+  (EUR 1, AUD 1.639644, BRL 6.03858, …).
 - **Validation lives in the web layer only:** the controller applies Bean Validation via
   `@Validated` on the request parameter (annotations on `ConversionRequest`: amount > 0,
   currencies present). `GlobalExceptionHandler.handleValidation` returns every invalid
@@ -92,7 +96,15 @@ Testcontainers `@ServiceConnection`, not from yaml; OTLP export disabled via
 `management.defaults.metrics.export.enabled=false` and `management.tracing.enabled=false`
 — this also covers tests since they inherit the dev default profile), and
 `application-prod.yaml` (`DB_URL`/`DB_USER`/`DB_PASSWORD` env vars, JSON structured logs
-via `logging.structured.format.console: logstash`).
+via `logging.structured.format.console: logstash`, observation/tracing enabled).
+
+## API
+
+`POST /api/v1/convert` converts an amount between two currencies:
+`{"sourceCurrency": "EUR", "targetCurrency": "USD", "amount": 100}` →
+`{"convertedAmount": 116.06}`. The amount must be greater than 0 and both currencies
+must be among the supported ones; errors are RFC 9457 ProblemDetail. Interactive
+OpenAPI docs (Swagger UI): <http://localhost:8080/swagger-ui.html>.
 
 ## Tests
 

@@ -8,18 +8,12 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
-
-	@Bean
-	@ServiceConnection
-	LgtmStackContainer grafanaLgtmContainer() {
-		return new LgtmStackContainer(DockerImageName.parse("grafana/otel-lgtm:latest"));
-	}
+public class TestcontainersConfiguration {
 
 	@Bean
 	@ServiceConnection
 	PostgreSQLContainer postgresContainer() {
-		return new PostgreSQLContainer(DockerImageName.parse("postgres:latest"));
+		return new PostgreSQLContainer(DockerImageName.parse("postgres:17-alpine"));
 	}
 
 }

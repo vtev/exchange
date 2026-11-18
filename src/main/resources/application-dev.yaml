@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    # In dev the datasource is provided by the Testcontainers @ServiceConnection
+    # (see TestExchangeserviceApplication); these properties are only used when
+    # running without Testcontainers, e.g. against compose or a standalone Postgres.
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/exchange}
+    username: ${DB_USER:exchange}
+    password: ${DB_PASSWORD:exchange}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{40} : %msg%n"
+
+management:
+  defaults:
+    metrics:
+      export:
+        enabled: false

@@ -93,10 +93,6 @@ public class GlobalExceptionHandler {
     return problem(HttpStatus.BAD_REQUEST, "Bad Request", detail);
   }
 
-  private static String detailOrDefault(Throwable cause) {
-    return cause.getMessage() == null ? "Malformed request body" : cause.getMessage();
-  }
-
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
@@ -105,6 +101,10 @@ public class GlobalExceptionHandler {
         HttpStatus.BAD_REQUEST,
         "Bad Request",
         "Invalid value for parameter: " + exception.getName());
+  }
+
+  private static String detailOrDefault(Throwable cause) {
+    return cause.getMessage() == null ? "Malformed request body" : cause.getMessage();
   }
 
   private static ProblemDetail problem(HttpStatus status, String title, String detail) {
